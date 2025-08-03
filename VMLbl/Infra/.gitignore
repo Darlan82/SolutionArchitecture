@@ -1,0 +1,41 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.*
+crash.log
+*.tfvars
+*.tfplan
+*.backup
+*.log
+.terraformrc
+terraform.rc
+
+# Sensitive files
+*.pem
+*.key
+*.p12
+*.cer
+*.crt
+*.pub
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Local override
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Provider-specific
+.terraform.lock.hcl
+
+# Chave SSH
+id_rsa
+id_rsa.pub
