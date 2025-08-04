@@ -72,5 +72,10 @@ variable "vmss_autoscale_name" {
   default     = "vmss-autoscale"
 }
 
+variable "lb_name" {
+  description = "Nome do load balancer"
+  type        = string
+  default     = "lb-vmss"
+}
 
 

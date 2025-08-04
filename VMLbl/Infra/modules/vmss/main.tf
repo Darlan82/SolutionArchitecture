@@ -28,6 +28,46 @@ resource "azurerm_network_security_group" "nsg_vmss" {
   }
 }
 
+# Load Balancer
+
+# IP Público para o Load Balancer
+resource "azurerm_public_ip" "lb_public_ip" {
+  name                = "lb-public-ip"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_lb" "lb_vmss" {
+  name                = var.lb_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku                 = "Standard"
+
+  frontend_ip_configuration {
+    name                 = "lb-frontend-vmss"
+    public_ip_address_id = azurerm_public_ip.lb_public_ip.id
+  }
+}
+
+resource "azurerm_lb_backend_address_pool" "lb_backend_pool_vmss" {
+  name            = "lb-backend-pool-vmss"
+  loadbalancer_id = azurerm_lb.lb_vmss.id
+}
+
+resource "azurerm_lb_rule" "lb_rule_http_vmss" {
+  name                           = "lb-rule-http-vmss"
+  loadbalancer_id                = azurerm_lb.lb_vmss.id
+  frontend_ip_configuration_name = "lb-frontend-vmss"
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.lb_backend_pool_vmss.id]
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 80
+  enable_floating_ip             = false
+  idle_timeout_in_minutes        = 4
+}
+
 resource "azurerm_managed_disk" "vmss_disk" {
   name                 = "vmss-disk"
   location             = var.location
@@ -37,19 +77,23 @@ resource "azurerm_managed_disk" "vmss_disk" {
   source_resource_id   = var.snapshot_id
 }
 
-# Criar uma imagem gerenciada a partir do snapshot
 resource "azurerm_image" "vmss_image" {
   name                = "vmss-image"
   location            = var.location
   resource_group_name = var.resource_group_name
 
   os_disk {
-    os_type            = "Linux"
+    os_type            = "Linux" # Ou "Windows", dependendo do sistema operacional
     managed_disk_id    = azurerm_managed_disk.vmss_disk.id
     caching            = "ReadWrite"
-    os_state           = "Specialized" # Use "Specialized" for existing VMs
+    os_state           = "Generalized" # Ajuste para "Generalized" se necessário
+    storage_type       = "Standard_LRS"
   }
+
+  hyper_v_generation = "V2"
 }
+
+
 
 resource "azurerm_linux_virtual_machine_scale_set" "vmss_lab1" {
   name                = var.vmss_name

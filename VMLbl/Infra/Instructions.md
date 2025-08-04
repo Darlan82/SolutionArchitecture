@@ -54,13 +54,20 @@ sudo mv /home/azureuser/index.php /var/www/html/index.php
 sudo rm /var/www/html/index.html
 ```
 
+Remova as configurações de usuário
+```bash
+sudo su
+sudo waagent -deprovision+user
+```
+
 Saia e volte ao terminal <br>
+Pare a VM1 <br>
 Criar o snapshot da VM1
 ```bash
  terraform apply -target='module.vm-snapshot'
 ```
 
-Criar o snapshot da VMSS
+Criar o  Load Balancer e VMSS
 ```bash
  terraform apply -target='module.vmss'
 ```

@@ -28,14 +28,3 @@ module "vmss" {
     module.vm-snapshot
     ]
 }
-
-module "lbl_vms_vmss" {
-  source = "./modules/lbl_vms_vmss"
-
-  resource_group_name = module.vm.resource_group_name
-  location            = module.vm.resource_group_location
-
-  vmss_id             = module.vmss.vmss_id
-
-  depends_on          = [module.vmss]
-}
