@@ -3,7 +3,7 @@
 
 ### Comandos:
 Instruções feitas no Windows 11<br>
-Executar todos os passos na pasta [Infra](Infra/)
+Executar todos os passos na pasta [Infra](Infra/)<br>
 Gera a chave de SSH antes. 
 ```bash 
 ssh-keygen -t rsa -b 2048 -f id_rsa
