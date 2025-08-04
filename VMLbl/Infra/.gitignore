@@ -39,3 +39,6 @@ override.tf.json
 # Chave SSH
 id_rsa
 id_rsa.pub
+
+#arquivos do az cli
+%USERPROFILE%

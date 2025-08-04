@@ -56,6 +56,17 @@ resource "azurerm_lb_backend_address_pool" "lb_backend_pool_vmss" {
   loadbalancer_id = azurerm_lb.lb_vmss.id
 }
 
+
+# Health Probe HTTP para o Load Balancer
+resource "azurerm_lb_probe" "http_probe" {
+  name                = "http-probe"  
+  loadbalancer_id     = azurerm_lb.lb_vmss.id
+  protocol            = "Http"
+  port                = 80
+  request_path        = "/"
+}
+
+# Regra do Load Balancer associada ao Health Probe
 resource "azurerm_lb_rule" "lb_rule_http_vmss" {
   name                           = "lb-rule-http-vmss"
   loadbalancer_id                = azurerm_lb.lb_vmss.id
@@ -66,6 +77,7 @@ resource "azurerm_lb_rule" "lb_rule_http_vmss" {
   backend_port                   = 80
   enable_floating_ip             = false
   idle_timeout_in_minutes        = 4
+  probe_id                       = azurerm_lb_probe.http_probe.id
 }
 
 resource "azurerm_managed_disk" "vmss_disk" {
@@ -87,7 +99,6 @@ resource "azurerm_image" "vmss_image" {
     managed_disk_id    = azurerm_managed_disk.vmss_disk.id
     caching            = "ReadWrite"
     os_state           = "Generalized" # Ajuste para "Generalized" se necessário
-    storage_type       = "Standard_LRS"
   }
 
   hyper_v_generation = "V2"
@@ -123,6 +134,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss_lab1" {
     ip_configuration {
       name      = "vmss-ipconfig"
       subnet_id = var.subnet_id
+      load_balancer_backend_address_pool_ids  = [azurerm_lb_backend_address_pool.lb_backend_pool_vmss.id]
     }
   }
 
