@@ -1,8 +1,7 @@
 ### Ajustes no `provider.tf`.
-* Trocar  o tenant_id
+* Trocar  o tenant_id no arquivo [provider.tf](Infra/provider.tf)
 
 ### Comandos:
-Execute os passos na pasta Infra.<br>
 Instruções feitas no Windows 11<br>
 
 Gera a chave de SSH antes. 
